@@ -11,7 +11,7 @@ INSTALL
 
 EXECUTION
 
-# 1.) python gdcVaultVideoDownloader.py "username" "password" "quality"
+# 1.) python gdcVaultVideoDownloader.py "username" "password" "quality" "year"
 -quality must be set to:
 	"low"  -> 1024x576 ~ 200MB per hour
 	"high" -> 1280x720 ~ 527MB per hour
