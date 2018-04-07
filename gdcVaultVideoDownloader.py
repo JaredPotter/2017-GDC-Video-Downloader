@@ -26,6 +26,7 @@ def extract_string(html, startingIndex, endingCharacter):
 username = sys.argv[1]
 password = sys.argv[2]
 quality = sys.argv[3]
+year = sys.argv[4]
 
 # String constants
 loginUrl = 'http://gdcvault.com/api/login.php'
@@ -42,6 +43,10 @@ if password == "":
 
 if quality != 'low' and quality != 'high':
 	print("quality: *" + quality + "* is invalid. Please select low or high.")
+	quit()
+
+if year == '':
+	print("year is missing. Try '17' or '18' as the last parameter.")
 	quit()
 
 # Read all urls from videoURLS.txt
@@ -78,9 +83,9 @@ try:
 		pageHtml = response.text
 
 		# Extract xml id index
-		startingIndex     = pageHtml.find('http://evt.dispeak.com/ubm/gdc/sf17/playerv.html?xml=') + 53
+		startingIndex     = pageHtml.find('http://evt.dispeak.com/ubm/gdc/sf' + year + '/playerv.html?xml=') + 53
 		if startingIndex == 52:
-			startingIndex = pageHtml.find('http://evt.dispeak.com/ubm/gdc/sf17/player.html?xml=') + 52
+			startingIndex = pageHtml.find('http://evt.dispeak.com/ubm/gdc/sf' + year + '/player.html?xml=') + 52
 
 		xmlId = extract_string(pageHtml, startingIndex, '.')
 
@@ -89,12 +94,12 @@ try:
 
 		# Load video XML file
 		# Example
-		# http://evt.dispeak.com/ubm/gdc/sf17/xml/846788_JSAJ.xml
-		response = requests.get('http://evt.dispeak.com/ubm/gdc/sf17/xml/' + xmlId + '.xml')
+		# http://evt.dispeak.com/ubm/gdc/sf' + year + '/xml/846788_JSAJ.xml
+		response = requests.get('http://evt.dispeak.com/ubm/gdc/sf' + year + '/xml/' + xmlId + '.xml')
 		print('XML file status code: ' + str(response.status_code))
 		pageHtml = response.text
 
-		startingIndex = pageHtml.find('assets/ubm/gdc/sf17/' + xmlId) + len('assets/ubm/gdc/sf17/' + xmlId) + 1
+		startingIndex = pageHtml.find('assets/ubm/gdc/sf' + year + '/' + xmlId) + len('assets/ubm/gdc/sf' + year + '/' + xmlId) + 1
 		secretCode = extract_string(pageHtml, startingIndex, '-')
 		print('secretCode: ' + secretCode)	
 
@@ -106,7 +111,7 @@ try:
 			videoQuality = '1300'
 
 		# Building actual video source url
-		srcUrl = 'http://s3-2u-d.digitallyspeaking.com/assets/ubm/gdc/sf17/' + xmlId + '-' + secretCode + '-' + videoQuality + '.mp4'
+		srcUrl = 'http://s3-2u-d.digitallyspeaking.com/assets/ubm/gdc/sf' + year + '/' + xmlId + '-' + secretCode + '-' + videoQuality + '.mp4'
 		print('srcUrl: ' + srcUrl)
 
 		startingIndex = pageHtml.find('<title><![CDATA[') + len('<title><![CDATA[')
