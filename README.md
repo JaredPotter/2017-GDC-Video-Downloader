@@ -16,6 +16,10 @@ EXECUTION
 	"low"  -> 1024x576 ~ 200MB per hour
 	"high" -> 1280x720 ~ 527MB per hour
 
+-year must be set to:
+	"17" -> 2017 video
+	"18" -> 2018 video
+
 SUPPORT
 
 Windows is currently the only supported platform. And that's only for the fact that I ensure the filename works with windows. Feel free to update the script to account for other operating systems.
