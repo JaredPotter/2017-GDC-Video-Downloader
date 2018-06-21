@@ -1,6 +1,8 @@
 ##################################
 #           README               #
 ##################################
+UPDATE: Now supports either 2017 or 2018 videos.
+
 
 INSTALL
 
