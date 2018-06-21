@@ -4,7 +4,7 @@ import os
 import sys
 
 # For debugging, set to True.
-verbose = True
+verbose = False
 
 def download_file(url, filename):
     local_filename = filename
@@ -134,7 +134,7 @@ try:
 			startingIndex = pageHtml.find('assets/ubm/gdc/sf' + year + '/' + xmlId) + len('assets/ubm/gdc/sf' + year + '/' + xmlId) + 1
 		elif int(year) == 18:
 			startingIndex = pageHtml.find('assets/ubm/gdc/sf' + year + '/videos/' + xmlId) + len('assets/ubm/gdc/sf' + year + '/videos/' + xmlId) + 1
-			
+
 		secretCode = extract_string(pageHtml, startingIndex, '-')
 		print('secretCode: ' + secretCode)	
 
