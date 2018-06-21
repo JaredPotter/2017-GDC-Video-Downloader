@@ -4,7 +4,7 @@ import os
 import sys
 
 # For debugging, set to True.
-verbose = False
+verbose = True
 
 def download_file(url, filename):
     local_filename = filename
@@ -49,6 +49,12 @@ if year == '':
 	print("year is missing. Try '17' or '18' as the last parameter.")
 	quit()
 
+if verbose:
+	print('username: ' + username)
+	print('password: ' + password)
+	print('quality: ' + quality)
+	print('year: ' + year)
+
 # Read all urls from videoURLS.txt
 urlList = []
 f = open('videoURLS.txt', 'r')
@@ -81,11 +87,23 @@ try:
 		response = requests.get(videoUrl, cookies=cookies)
 		print('Video page status code: ' + str(response.status_code))
 		pageHtml = response.text
-
+		startingIndex = 0
 		# Extract xml id index
-		startingIndex     = pageHtml.find('http://evt.dispeak.com/ubm/gdc/sf' + year + '/playerv.html?xml=') + 53
-		if startingIndex == 52:
-			startingIndex = pageHtml.find('http://evt.dispeak.com/ubm/gdc/sf' + year + '/player.html?xml=') + 52
+		if int(year) == 17:		
+			startingIndex     = pageHtml.find('http://evt.dispeak.com/ubm/gdc/sf' + year + '/playerv.html?xml=') + 53
+			if startingIndex == 52:
+				startingIndex = pageHtml.find('http://evt.dispeak.com/ubm/gdc/sf' + year + '/player.html?xml=') + 52
+		elif int(year) == 18:
+			# https://sevt.dispeak.com/ubm/gdc/sf18/playerv.html?xml=
+			findPath = 'https://sevt.dispeak.com/ubm/gdc/sf' + year + '/playerv.html?xml='
+			if verbose:
+				print('findPath: ' + findPath)
+			startingIndex     = pageHtml.find(findPath) + 55
+			if startingIndex == 54:
+				startingIndex = pageHtml.find('https://sevt.dispeak.com/ubm/gdc/sf' + year + '/player.html?xml=') + 54
+
+		if verbose:
+			print('StartingIndex: ' + str(startingIndex))
 
 		xmlId = extract_string(pageHtml, startingIndex, '.')
 
@@ -95,11 +113,28 @@ try:
 		# Load video XML file
 		# Example
 		# http://evt.dispeak.com/ubm/gdc/sf' + year + '/xml/846788_JSAJ.xml
-		response = requests.get('http://evt.dispeak.com/ubm/gdc/sf' + year + '/xml/' + xmlId + '.xml')
+		
+		xmlFilePath = ''
+		
+		if int(year) == 17:
+			xmlFilePath = 'http://evt.dispeak.com/ubm/gdc/sf' + year + '/xml/' + xmlId + '.xml'
+			
+		elif int(year) == 18:
+			xmlFilePath = 'https://sevt.dispeak.com/ubm/gdc/sf' + year + '/xml/' + xmlId + '.xml'
+
+		if verbose:
+			print('xmlFilePath: ' + xmlFilePath)
+
+		response = requests.get(xmlFilePath)
+
 		print('XML file status code: ' + str(response.status_code))
 		pageHtml = response.text
 
-		startingIndex = pageHtml.find('assets/ubm/gdc/sf' + year + '/' + xmlId) + len('assets/ubm/gdc/sf' + year + '/' + xmlId) + 1
+		if int(year) == 17:
+			startingIndex = pageHtml.find('assets/ubm/gdc/sf' + year + '/' + xmlId) + len('assets/ubm/gdc/sf' + year + '/' + xmlId) + 1
+		elif int(year) == 18:
+			startingIndex = pageHtml.find('assets/ubm/gdc/sf' + year + '/videos/' + xmlId) + len('assets/ubm/gdc/sf' + year + '/videos/' + xmlId) + 1
+			
 		secretCode = extract_string(pageHtml, startingIndex, '-')
 		print('secretCode: ' + secretCode)	
 
@@ -110,8 +145,13 @@ try:
 		elif quality == 'high':
 			videoQuality = '1300'
 
+		srcUrl = ''
+
 		# Building actual video source url
-		srcUrl = 'http://s3-2u-d.digitallyspeaking.com/assets/ubm/gdc/sf' + year + '/' + xmlId + '-' + secretCode + '-' + videoQuality + '.mp4'
+		if int(year) == 17:
+			srcUrl = 'http://s3-2u-d.digitallyspeaking.com/assets/ubm/gdc/sf' + year + '/' + xmlId + '-' + secretCode + '-' + videoQuality + '.mp4'
+		elif int(year) == 18:
+			srcUrl = 'http://s3-2u-d.digitallyspeaking.com/assets/ubm/gdc/sf' + year + '/videos/' + xmlId + '-' + secretCode + '-' + videoQuality + '.mp4'
 		print('srcUrl: ' + srcUrl)
 
 		startingIndex = pageHtml.find('<title><![CDATA[') + len('<title><![CDATA[')

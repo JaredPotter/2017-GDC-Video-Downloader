@@ -5,9 +5,10 @@
 INSTALL
 
 # 1.) Install python 3.6
-# 2.) Install pip (python get-pip.py)
-# 3.) Install 'requests' library (pip install requests)
-# 4.) Put 1 video url per line in the videoURLS.txt file
+# 2.) sudo easy_install -U requests
+# 3.) Put 1 video url per line in the videoURLS.txt file
+
+Note: only do 2017 or 2018 sets of videos at a time.
 
 EXECUTION
 
